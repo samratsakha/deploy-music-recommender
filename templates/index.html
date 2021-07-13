@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="icon" type="image/png"
+        href="http://www.pngall.com/wp-content/uploads/2016/09/Musical-Notes-Free-Download-PNG.png" />
+    <title>Music Recommender</title>
+
+    <style>
+        * {
+            margin: 0%;
+            padding: 0%;
+        }
+
+
+        header {
+            color: rgb(255, 255, 255);
+            background-image: url('https://h2clipper.com/wp-content/uploads/2014/01/blue-background-gradient.jpg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            font-size: xx-large;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            text-align: center;
+            justify-items: center;
+            position: sticky;
+            top: 0;
+            height: 110px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .left-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-left: 5%;
+        }
+
+        .right-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-left: 5%;
+            margin-right: 4%;
+        }
+
+
+        #modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba(255, 255, 255, .8) url('http://i.stack.imgur.com/FhHRx.gif') 50% 50% no-repeat;
+        }
+
+        .navbar {
+            background-image: linear-gradient(to right, black, rgb(255, 255, 255));
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 50px;
+            position: sticky;
+            top: 110px;
+        }
+
+        .navbar nav {
+            margin-left: 4%;
+        }
+
+        .navbar nav:hover {
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        #search {
+            margin-bottom: 5px;
+            width: 300px;
+        }
+
+        #search_list {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #search_list li {
+            background-color: grey;
+            margin-bottom: 1%;
+            width: 300px;
+        }
+
+        #search_list li:hover {
+            cursor: pointer;
+            background-color: blue;
+        }
+
+        #output {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #output li {
+            margin-bottom: 10px;
+        }
+
+        @media screen and (max-width: 650px) {
+            #search {
+                width: 200px;
+            }
+
+            #search_list li {
+                width: 200px;
+            }
+        }
+
+        @media screen and (max-width: 500px) {
+            #search {
+                width: 280px;
+            }
+
+            #search_list li {
+                width: 280px;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+        }
+
+        @media screen and (max-width: 325px) {
+            #search {
+                width: 200px;
+            }
+
+            #search_list li {
+                width: 200px;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <header class="header">
+        <h3>Musify</h3>
+        <h5>The Music Recommender</h5>
+    </header>
+
+    <div class="navbar">
+        <nav><a target="_blank" href="https://www.linkedin.com/in/samrat-sakha-2a62841a3/">LinkedIn</a></nav>
+        <nav><a target="_blank" href="https://github.com/samratsakha">Github</a></nav>
+        <nav><a target="_blank" href="https://samratsakha.github.io/testing.github.io/">WebPage</a></nav>
+        <nav><a target="_blank" href="mailto:samratsakha54@gmail.com">Mail</a></nav>
+    </div>
+
+    <div class="main-content">
+
+        <div class="left-container">
+
+            <input type="text" id="search" placeholder="Search Tracks" oninput="filter(this.value)">
+
+            <ul id="search_list">
+
+            </ul><br>
+
+        </div>
+
+        <div class="right-container">
+            <h5>Recommended Songs</h5>
+            <ul id="output">
+                <li>Select song</li>
+            </ul>
+
+        </div>
+    </div>
+
+
+
+    <div id="modal">
+        <!-- Place at bottom of page -->
+    </div>
+
+</body>
+<script type="text/javascript">
+
+
+    var recieve_output = Array();
+    var search_array = Array();
+
+    // Function for filter search
+    function filter(search_val) {
+
+        search_val = search_val.toLowerCase();
+        var count = 0;
+        var track_name = "";
+        search_array = [];
+
+        for (var i = 0; i < recieve_output.length; i++) {
+
+            track_name = recieve_output[i].toLowerCase();
+
+            if (track_name.includes(search_val)) {
+                search_array.push(recieve_output[i]);
+                count++;
+
+                if (count == 10) {
+                    count = 0;
+                    break;
+                }
+
+            }
+
+        }
+
+
+        // Display the search result
+        var disp = "";
+        for (var i = 0; i < search_array.length; i++) {
+            var temp = '<li onclick=recommendation(' + i + ')>' + search_array[i] + '</li>';
+            disp = disp + temp;
+        }
+        document.getElementById("search_list").innerHTML = disp;
+    }
+
+
+
+    // Function call API for getting the tracks
+    function get_tracks() {
+        var entry = {
+            track_array: 'request_tracks'
+        };
+
+        fetch('/to_tracks', {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify(entry),
+            cache: 'no-cache',
+            headers: new Headers({
+                'content-type': 'application/json'
+            })
+        })
+            .then(function (response) {
+                if (response.status !== 200) {
+                    document.getElementById("modal").style.display = "none";
+                    document.getElementById("output").innerHTML = "Error : Model did not Respond";
+                    document.getElementById("output").style.display = "block";
+                    console.log('Response status was not 200');
+                    return;
+                }
+
+                response.json().then(function (data) {
+                    document.getElementById("modal").style.display = "none";
+                    var display_out = JSON.stringify(data);
+                    var outs = JSON.parse(display_out);
+
+                    recieve_output = outs.output;
+
+                    recieve_output.sort();
+
+                })
+            })
+    }
+
+
+    setTimeout(get_tracks, 2000);
+
+
+
+    function recommendation(selected_track) {
+
+
+        var selected_song = search_array[selected_track];
+
+        document.getElementById("search").value = selected_song;
+
+        document.getElementById("modal").style.display = "block";
+
+        var entry = {
+            val_array: selected_song
+        };
+
+        fetch('/to_model', {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify(entry),
+            cache: 'no-cache',
+            headers: new Headers({
+                'content-type': 'application/json'
+            })
+        })
+            .then(function (response) {
+                if (response.status !== 200) {
+                    document.getElementById("modal").style.display = "none";
+                    document.getElementById("output").innerHTML = "Error : Model did not Respond";
+                    document.getElementById("output").style.display = "block";
+                    console.log('Response status was not 200');
+                    return;
+                }
+
+                response.json().then(function (data) {
+                    document.getElementById("modal").style.display = "none";
+                    var display_out = JSON.stringify(data);
+                    var outs = JSON.parse(display_out);
+
+                    var recommended_songs = outs.output;
+
+                    document.getElementById("output").innerHTML = recommended_songs;
+
+                    var disp_rec = "";
+                    for (var i = 0; i < recommended_songs.length; i++) {
+                        disp_rec = disp_rec + '<li>' + recommended_songs[i] + '</li>';
+                    }
+
+                    document.getElementById("output").innerHTML = disp_rec;
+                    document.getElementById("output").style.display = "block";
+
+                })
+            })
+
+    }
+
+
+</script>
+
+</html>
