@@ -18,8 +18,11 @@ app = Flask(__name__)
 ## Load the dataset into a dataframe
 df = pd.read_csv('dataset.csv')
 df_cleaned = pd.read_csv('cleaned.csv')
+df_url = pd.read_csv('final_url_data.csv')
+
 
 track_names = list(df['Track Name'])
+urls = list(df_url['URL'])
 
 
 def recommend(distances,indices):
@@ -35,6 +38,29 @@ def recommend(distances,indices):
     music_list.sort(key= lambda X:X[2])
 
     return music_list
+
+
+def recieve_url(indices):
+
+    url_list = []
+    
+    for i in range(len(indices.flatten())):
+        if i==0:
+            pass
+        else:
+            temp = [urls[indices.flatten()[i]],df.iloc[indices.flatten()[i],2]]
+            url_list.append(temp)
+
+    url_list.sort(key= lambda X:X[1])
+
+    final_url_list = []
+
+    for i in range(len(url_list)):
+        final_url_list.append(url_list[i][0])
+    
+    return final_url_list
+
+
 
 # Templates
 # Home page
@@ -65,12 +91,16 @@ def to_model():
 
         recommend_list = []
 
+        selected_track = urls[indices.flatten()[0]]
+
         for i in range(len(music_list)):
             recommend_list.append(music_list[i][1]+ " by " +music_list[i][0])
 
         outs = recommend_list
+        outs2 = recieve_url(indices)
+        
 
-        x = {"output": outs}
+        x = {"output": outs, "url": outs2, "track":selected_track}
         y = json.dumps(x)
 
         return y

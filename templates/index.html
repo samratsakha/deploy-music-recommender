@@ -129,6 +129,26 @@
             margin-bottom: 10px;
         }
 
+        #video_list {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .youtube {
+            margin-left: 5%;
+            margin-top: 30px;
+            margin-bottom: 8%;
+        }
+
+        #video_list iframe {
+            width: 50%;
+        }
+
+        #your_track iframe {
+            width: 50%;
+        }
+
         @media screen and (max-width: 650px) {
             #search {
                 width: 200px;
@@ -136,6 +156,14 @@
 
             #search_list li {
                 width: 200px;
+            }
+
+            #video_list iframe {
+                width: 80%;
+            }
+
+            #your_track iframe {
+                width: 80%;
             }
         }
 
@@ -203,6 +231,16 @@
             </ul>
 
         </div>
+
+    </div>
+
+    <div id="youtube-id" class="youtube" style="display: none;">
+        <h4>Your selected song</h4><br>
+        <div id="your_track"></div><br>
+        <h3>Recommended for you</h3><br>
+        <ul id="video_list">
+
+        </ul>
     </div>
 
 
@@ -250,7 +288,10 @@
             var temp = '<li onclick=recommendation(' + i + ')>' + search_array[i] + '</li>';
             disp = disp + temp;
         }
+
         document.getElementById("search_list").innerHTML = disp;
+        document.getElementById("search_list").style.display = "block";
+
     }
 
 
@@ -293,7 +334,7 @@
     }
 
 
-    setTimeout(get_tracks, 2000);
+    setTimeout(get_tracks, 1000);
 
 
 
@@ -305,6 +346,7 @@
         document.getElementById("search").value = selected_song;
 
         document.getElementById("modal").style.display = "block";
+        document.getElementById("search_list").style.display = "none";
 
         var entry = {
             val_array: selected_song
@@ -334,6 +376,11 @@
                     var outs = JSON.parse(display_out);
 
                     var recommended_songs = outs.output;
+                    var urls = outs.url;
+                    var track_url = outs.track;
+
+                    track_url = track_url.replace("watch?v=", "embed/");
+                    document.getElementById("your_track").innerHTML = '<iframe width="500" height="225" src="' + track_url + '"></iframe>';
 
                     document.getElementById("output").innerHTML = recommended_songs;
 
@@ -342,8 +389,19 @@
                         disp_rec = disp_rec + '<li>' + recommended_songs[i] + '</li>';
                     }
 
+                    var recommend_vdos = "";
+                    for (var i = 0; i < urls.length; i++) {
+                        urls[i] = urls[i].replace("watch?v=", "embed/");
+                        if(urls[i].toLowerCase()=='none'){
+                            continue;
+                        }
+                        recommend_vdos = recommend_vdos + '<li><iframe width="500" height="225" src="' + urls[i] + '"></iframe></li>';
+                    }
+
+                    document.getElementById("video_list").innerHTML = recommend_vdos;
                     document.getElementById("output").innerHTML = disp_rec;
                     document.getElementById("output").style.display = "block";
+                    document.getElementById("youtube-id").style.display = "block";
 
                 })
             })
