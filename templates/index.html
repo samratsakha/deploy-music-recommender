@@ -380,9 +380,13 @@
                     var track_url = outs.track;
 
                     track_url = track_url.replace("watch?v=", "embed/");
-                    document.getElementById("your_track").innerHTML = '<iframe width="500" height="225" src="' + track_url + '"></iframe>';
+                    if (track_url.toLowerCase() == 'none') {
+                        document.getElementById("your_track").innerHTML = '<h5>'+selected_song+'</h5>';
+                    }
+                    else {
+                        document.getElementById("your_track").innerHTML = '<iframe width="500" height="225" src="' + track_url + '"></iframe>';
+                    }
 
-                    document.getElementById("output").innerHTML = recommended_songs;
 
                     var disp_rec = "";
                     for (var i = 0; i < recommended_songs.length; i++) {
@@ -392,7 +396,7 @@
                     var recommend_vdos = "";
                     for (var i = 0; i < urls.length; i++) {
                         urls[i] = urls[i].replace("watch?v=", "embed/");
-                        if(urls[i].toLowerCase()=='none'){
+                        if (urls[i].toLowerCase() == 'none') {
                             continue;
                         }
                         recommend_vdos = recommend_vdos + '<li><iframe width="500" height="225" src="' + urls[i] + '"></iframe></li>';
